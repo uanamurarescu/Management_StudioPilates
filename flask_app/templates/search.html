@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set title = "Cautare" %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h1>Cautare Rapida</h1>
+      <p class="muted">Verifica daca o inregistrare exista in baza de date.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <form method="post" class="form">
+      <label>Tabel</label>
+      <select name="table">
+        {% for t, cfg in site_cfg.items() %}
+          <option value="{{ t }}">{{ cfg["title"] }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Camp (Coloana)</label>
+      <input name="field" placeholder="ex: Nume, CNP sau ID_client">
+
+      <label>Valoare Cautata</label>
+      <input name="value" placeholder="Introduceti valoarea...">
+
+      <div class="actions">
+        <button class="btn" type="submit">Verifica Existenta</button>
+      </div>
+    </form>
+
+    {% if result %}
+      <hr style="margin:16px 0; opacity:.2;">
+      {% if result.ok %}
+        <p>Rezultat pentru <b>{{ result.table }}</b> ({{ result.field }} = {{ result.value }}):</p>
+        <p style="font-size: 1.5rem;"><b>{{ "INREGISTRARE GASITA" if result.exists else "NU EXISTA" }}</b></p>
+      {% else %}
+        <p class="muted">Eroare la cautare: {{ result.error }}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}

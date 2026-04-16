@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% set title = "Configurare Inițială" %}
+
+{% block content %}
+  <div class="panel warning">
+    <h1>Cont Administrator Necesar</h1>
+    <p>Sistemul a detectat că tabelul <b>userC</b> este gol.</p>
+    <p>Pentru a putea accesa functiile de administrare, trebuie sa creati un cont de test.</p>
+    <a class="btn" href="{{ url_for('seed_admin') }}">Genereaz[ Admin Demo</a>
+  </div>
+{% endblock %}

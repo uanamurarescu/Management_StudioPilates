@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% set title = table_cfg["title"] %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h1>{{ table_cfg["title"] }}</h1>
+      <p class="muted">Administrare tabel: {{ table }}</p>
+    </div>
+    <a class="btn" href="{{ url_for('crud_create', table=table) }}">+ Adauga inregistrare</a>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {% for c in cols %}<th>{{ c }}</th>{% endfor %}
+          <th>Actiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          {% for v in r %}<td>{{ v }}</td>{% endfor %}
+          <td class="actions-col">
+            {% if table_cfg["update_fields"]|length > 0 %}
+              <a class="btn btn-ghost" href="{{ url_for('crud_edit', table=table, rec_id=r[0]) }}">Editeaza</a>
+            {% else %}
+              <span class="muted">N/A</span>
+            {% endif %}
+
+            <form method="post" action="{{ url_for('crud_delete', table=table, rec_id=r[0]) }}"
+                  onsubmit="return confirm('Stergi inregistrarea?');"
+                  style="display:inline;">
+              <button class="btn btn-danger" type="submit">Sterge</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
