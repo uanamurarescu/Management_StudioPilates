@@ -22,13 +22,11 @@ from reportlab.lib.units import inch
 
 from app.db import run_select
 
-# --- Configurații Generale ---
 OUT_DIR = Path("exports")
 OUT_DIR.mkdir(exist_ok=True)
-LOGO_PATH = Path("logo_rotund-removebg-preview.png")
+LOGO_PATH = Path("logo_dreptunghic.png")
 LOGO_PREPARED_PATH = OUT_DIR / "_logo_prepared.png"
 
-# --- Paleta de Culori ---
 PINK_DARK = "#8B2252"
 PINK_MID = "#C2185B"
 PINK_HEADER_BG = "#880E4F"
@@ -94,7 +92,7 @@ def prepare_logo():
         return LOGO_PREPARED_PATH
     img = PILImage.open(str(LOGO_PATH)).convert("RGBA")
     background = PILImage.new("RGBA", img.size, (255, 255, 255, 255))
-    background.paste(img, mask=img.split()[3])   # aplica canalul alpha ca masca
+    background.paste(img, mask=img.split()[3])
     background.convert("RGB").save(str(LOGO_PREPARED_PATH), "PNG")
     return LOGO_PREPARED_PATH
 
@@ -129,11 +127,9 @@ def generate_chart(report_id, data, title, chart_type):
     labels = [str(d["label"]) for d in data]
     values = [d["value"] for d in data]
     path = OUT_DIR / f"{report_id}_chart.png"
-
     fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor("#FFF0F5")
     ax.set_facecolor("#FFF0F5")
-
     if chart_type == "bar":
         bars = ax.bar(labels, values, color=PINK_DARK, edgecolor=PINK_MID)
         for bar in bars:
@@ -144,52 +140,35 @@ def generate_chart(report_id, data, title, chart_type):
         ax.fill_between(range(len(labels)), values, alpha=0.15, color=PINK_DARK)
     elif chart_type == "pie":
         ax.pie(values, labels=labels, colors=PINK_PIE, autopct="%1.1f%%", startangle=140)
-
     ax.set_title(title, fontsize=14, color=PINK_HEADER_BG, fontweight="bold", pad=20)
     if chart_type != "pie":
         plt.xticks(rotation=45, ha="right", color=PINK_HEADER_BG, fontsize=9)
         ax.grid(axis="y", linestyle="--", alpha=0.3, color=PINK_GRID)
-
     plt.tight_layout()
     plt.savefig(str(path), dpi=150)
     plt.close()
     return path
 
-
 def generate_pdf(report_id, data, config, chart_path):
     pdf_path = OUT_DIR / f"{report_id}.pdf"
-
     doc = SimpleDocTemplate(str(pdf_path), pagesize=A4, topMargin=0.5 * inch)
     elements = []
     styles = getSampleStyleSheet()
-
     title_style = ParagraphStyle(
         name="TitleStyle", parent=styles["Heading1"], fontSize=20,
         textColor=colors.HexColor(PINK_HEADER_BG), alignment=0
     )
-
-    logo_path = prepare_logo()
-
-    logo_size = 1.3 * inch
-
+    logo_width = 3.7 * inch
+    logo_height = 1.2 * inch
     if LOGO_PATH.exists():
-        # Am mărit dimensiunea la 1.3 pentru a fi vizibil, păstrând raportul 1:1
-        logo_img = Image(str(LOGO_PATH), width=logo_size, height=logo_size)
-
-        # hAlign='CENTER' este crucial aici pentru a-l pune deasupra titlului pe mijloc
+        logo_img = Image(str(LOGO_PATH), width=logo_width, height=logo_height)
         logo_img.hAlign = 'CENTER'
         elements.append(logo_img)
-
-        # Adăugăm un mic spațiu între logo și titlu
         elements.append(Spacer(1, 10))
-
-    # Titlul vine imediat sub, tot pe centru
     title_para = Paragraph(config["title"], title_style)
     elements.append(title_para)
-
     elements.append(Spacer(1, 10))
     elements.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor(PINK_MID), spaceAfter=15))
-
     info_text = (
         f"Raportul generat reprezinta o resursa folositoare in analiza in adancime "
         f"a performantelor firmei in anul 2026. Acesta este focusat pe datele "
@@ -198,8 +177,6 @@ def generate_pdf(report_id, data, config, chart_path):
     )
     elements.append(Paragraph(info_text, styles["Normal"]))
     elements.append(Spacer(1, 20))
-
-    # Tabel
     table_data = [config["columns"]] + [[str(d["label"]), str(d["value"])] for d in data]
     tbl = Table(table_data, colWidths=[doc.width * 0.7, doc.width * 0.25])
     tbl.setStyle(TableStyle([
@@ -211,12 +188,9 @@ def generate_pdf(report_id, data, config, chart_path):
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]))
     elements.append(tbl)
-
-    # Conversie str(chart_path)[cite: 3]
     if chart_path and chart_path.exists():
         elements.append(Spacer(1, 30))
         elements.append(Image(str(chart_path), width=6 * inch, height=3.5 * inch))
-
     doc.build(elements)
 
 
@@ -225,7 +199,6 @@ def main():
     for r_id, config in configs.items():
         print(f"Generare: {config['title']}...")
         data = fetch_data(config["sql"])
-
         if data:
             export_csv(r_id, data, config["columns"])
             export_json(r_id, data)

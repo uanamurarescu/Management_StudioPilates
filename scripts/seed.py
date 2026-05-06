@@ -1,6 +1,9 @@
 import random
 from faker import Faker
 from app.db import run_execute, run_select
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 fake = Faker()
 
@@ -14,11 +17,12 @@ NUM_REVIEWS = 1000
 NUM_MACHINES = 400
 NUM_USERS = 3000
 NUM_USERS_LOG = 4000
+admin_pass = os.getenv("ADMIN_PASS")
 
 print("Cream user admin fix")
 run_execute(
     "INSERT IGNORE INTO userC (username, password) VALUES (%s, %s);",
-    ("admin", "admin123")   # parola in clar
+    ("admin", admin_pass)
 )
 
 print("Generam clienti...")
