@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% set title = table_cfg["title"] %}
-
 {% block content %}
   <div class="page-head">
     <div>
@@ -9,7 +8,6 @@
     </div>
     <a class="btn" href="{{ url_for('crud_create', table=table) }}">+ Adauga inregistrare</a>
   </div>
-
   <div class="table-wrap">
     <table>
       <thead>

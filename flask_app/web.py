@@ -94,29 +94,22 @@ CRUD_CONFIG = {
     },
 }
 
-
-# --- FUNCTII HELPER ---
-
 def ensure_table_allowed(table):
     if table not in CRUD_CONFIG:
         abort(404)
     return CRUD_CONFIG[table]
 
-
 def has_any_user():
     try:
-        # Verificăm în tabelul tău userC
         rows = run_select("SELECT ID_user FROM userC LIMIT 1;")
         return bool(rows)
     except Exception:
         return False
 
-
 def record_exists(table, field, value):
     ensure_table_allowed(table)
     q = f"SELECT 1 FROM {table} WHERE {field}=%s LIMIT 1;"
     return bool(run_select(q, (value,)))
-
 
 def fetch_list(table):
     cfg = ensure_table_allowed(table)
@@ -128,7 +121,6 @@ def fetch_list(table):
     rows = run_select(q)
     return cols, rows
 
-
 def fetch_by_id(table, rec_id):
     cfg = ensure_table_allowed(table)
     pk = cfg["pk"]
@@ -138,7 +130,6 @@ def fetch_by_id(table, rec_id):
     q = f"SELECT {', '.join(cols)} FROM {table} WHERE {pk}=%s LIMIT 1;"
     rows = run_select(q, (rec_id,))
     return cols, (rows[0] if rows else None)
-
 
 def build_fk_options(cfg):
     options = {}
@@ -150,36 +141,30 @@ def build_fk_options(cfg):
         options[field] = [(str(r[0]), str(r[1])) for r in rows]
     return options
 
-
 def insert_record(table, form):
     cfg = ensure_table_allowed(table)
     fields = cfg["create_fields"]
     values = []
-
     for f in fields:
         v = (form.get(f) or "").strip()
         if v == "":
             raise ValueError(f"Camp obligatoriu lipsa: {f}")
         values.append(v)
-
     for f, v in zip(fields, values):
         if f.endswith("_id") and "fk_dropdowns" in cfg and f in cfg["fk_dropdowns"]:
             parent_table, parent_pk, _label = cfg["fk_dropdowns"][f]
             if not record_exists(parent_table, parent_pk, v):
                 raise ValueError(f"Valoare invalida pentru {f} (nu exista in {parent_table}).")
-
     cols = ", ".join(fields)
     placeholders = ", ".join(["%s"] * len(fields))
     q = f"INSERT INTO {table} ({cols}) VALUES ({placeholders});"
     run_execute(q, tuple(values))
-
 
 def update_record(table, rec_id, form):
     cfg = ensure_table_allowed(table)
     fields = cfg["update_fields"]
     if not fields:
         raise ValueError("Update nepermis pentru acest tabel.")
-
     pairs = []
     values = []
     for f in fields:
@@ -188,22 +173,17 @@ def update_record(table, rec_id, form):
             raise ValueError(f"Camp obligatoriu lipsa: {f}")
         pairs.append(f"{f}=%s")
         values.append(v)
-
     values.append(rec_id)
-
     q = f"UPDATE {table} SET {', '.join(pairs)} WHERE {cfg['pk']}=%s;"
     run_execute(q, tuple(values))
 
-
 def delete_record_safe(table, rec_id):
     cfg = ensure_table_allowed(table)
-
     for ch in cfg.get("children", []):
         run_execute(f"DELETE FROM {ch['table']} WHERE {ch['fk']}=%s;", (rec_id,))
     run_execute(f"DELETE FROM {table} WHERE {cfg['pk']}=%s;", (rec_id,))
 
 
-# --- RUTE FLASK ---
 @app.before_request
 def guard_if_no_users():
     allowed = {"/", "/setup", "/seed-admin", "/search"}
@@ -233,12 +213,10 @@ def seed_admin():
         flash("Exista deja utilizatori in sistem.", "info")
         return redirect(url_for("crud_list", table="userC"))
 
-    # pentru a respecta FK)
     run_execute("INSERT INTO Clienti (CNP, Nume, Prenume, Varsta,  Nivel_sedentarism, Sesiune_dorita) VALUES (%s, %s, %s, %s, %s, %s)",
                 ("0000000000000","Sistem", "Admin", "99", "Scazut", "reformer pilates"))
     last_id = run_select("SELECT LAST_INSERT_ID()")[0][0]
 
-    # Cream userul legat de clientul de mai sus
     run_execute("INSERT INTO userC (username, password, fk_idClient) VALUES (%s, %s, %s);",
                 ("admin", "admin123", last_id))
 
@@ -257,7 +235,6 @@ def crud_list(table):
         cols=cols,
         rows=rows,
     )
-
 
 @app.route("/crud/<table>/create", methods=["GET", "POST"])
 def crud_create(table):
@@ -279,10 +256,8 @@ def crud_edit(table, rec_id):
     cols, row = fetch_by_id(table, rec_id)
     if not row:
         abort(404)
-
     values = dict(zip(cols, row))
     fk_options = build_fk_options(cfg)
-
     if request.method == "POST":
         try:
             update_record(table, rec_id, request.form)
@@ -290,7 +265,6 @@ def crud_edit(table, rec_id):
             return redirect(url_for("crud_list", table=table))
         except Exception as e:
             flash(str(e), "error")
-
     return render_template(
         "crud_form.html",
         site_cfg=CRUD_CONFIG,

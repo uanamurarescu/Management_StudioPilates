@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% set title = table_cfg["title"] ~ " - " ~ ("Creare" if mode=="create" else "Editare") %}
-
 {% block content %}
   <div class="page-head">
     <div>
@@ -11,7 +10,6 @@
     </div>
     <a class="btn btn-ghost" href="{{ url_for('crud_list', table=table) }}">Inapoi</a>
   </div>
-
   <div class="panel">
     <form method="post" class="form">
       {% for f in fields %}
@@ -27,25 +25,21 @@
               </option>
             {% endfor %}
           </select>
-
         {% elif choices and f in choices %}
           <select name="{{ f }}">
             {% for opt in choices[f] %}
               <option value="{{ opt }}" {% if values.get(f) == opt %}selected{% endif %}>{{ opt }}</option>
             {% endfor %}
           </select>
-
         {% else %}
           <input name="{{ f }}" value="{{ values.get(f, '') }}" placeholder="{{ f }}">
         {% endif %}
       {% endfor %}
-
       <div class="actions">
         <button class="btn" type="submit">{{ "Creeaza" if mode=="create" else "Salveaza Modificarile" }}</button>
         <a class="btn btn-ghost" href="{{ url_for('crud_list', table=table) }}">Anuleaza</a>
       </div>
     </form>
-
     {% if mode=="edit" %}
       <p class="muted" style="margin-top:12px;">Identificator inregistrare: <b>{{ rec_id }}</b></p>
     {% endif %}

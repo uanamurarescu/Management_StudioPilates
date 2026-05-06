@@ -1,0 +1,12 @@
+.env
+secret.key
+secrets.py
+*.pem
+*.key
+docker-compose.yml
+docker-compose.override.yml
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.idea/

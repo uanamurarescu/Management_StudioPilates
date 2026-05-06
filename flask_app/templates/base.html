@@ -23,7 +23,6 @@
       {% endfor %}
     </nav>
   </header>
-
   <main class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -37,7 +36,6 @@
 
     {% block content %}{% endblock %}
   </main>
-
   <footer class="footer">
     <span>Sistem Pilates • Flask + MariaDB</span>
   </footer>

@@ -1,41 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;500;600;700&display=swap');
+
 :root{
-  /* CULORI MODIFICATE PENTRU TEMA ROZ */
-  --bg0:#fff0f5; /* Lavender Blush */
-  --bg1:#ffe4e1; /* Misty Rose */
+  --bg0:#fff0f5;
+  --bg1:#ffe4e1;
   --panel:rgba(255, 255, 255, 0.4);
   --panel2:rgba(255, 255, 255, 0.6);
   --stroke:rgba(214, 51, 132, 0.15);
   --stroke2:rgba(214, 51, 132, 0.25);
-
-  --text:#4a132c; /* Vișiniu închis pentru contrast pe roz */
+  --text:#4a132c;
   --muted:rgba(74, 19, 44, 0.65);
-
-  --brand:#d63384; /* Roz intens Pilates */
+  --brand:#d63384;
   --brand2:#fd7eb8;
   --good:#2ecc71;
   --warn:#f39c12;
   --bad:#e74c3c;
-
   --shadow: 0 18px 45px rgba(214, 51, 132, 0.12);
   --shadow2: 0 10px 28px rgba(214, 51, 132, 0.08);
-
   --radius:18px;
   --radius2:14px;
-
   --pad:16px;
   --pad2:12px;
-
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --sans: 'Quicksand', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --cursive: 'Dancing Script', cursive;
 }
-
-/* --- RESTUL CODULUI RAMANE NEMODIFICAT PENTRU A PASTRA ASEZAREA --- */
 
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{
   margin:0;
   font-family:var(--sans);
+  font-weight: 500;
   color:var(--text);
   background:
     radial-gradient(1200px 700px at 20% 0%, rgba(214, 51, 132, 0.12), transparent 55%),
@@ -74,6 +69,8 @@ body:before{
   gap:12px;
   font-weight:800;
   letter-spacing:.3px;
+  font-family: var(--cursive);
+  font-size: 20px;
 }
 .dot{
   width:11px;
@@ -131,8 +128,9 @@ body:before{
 }
 h1{
   margin:0;
-  font-size: 30px;
+  font-size: 36px;
   letter-spacing:.2px;
+  font-family: var(--cursive);
 }
 .muted{
   color: var(--muted);
@@ -182,6 +180,7 @@ th{
   color:var(--muted);
   padding: 12px 12px;
   border-bottom:1px solid var(--stroke);
+  font-weight: 700;
 }
 
 tbody tr{
@@ -211,6 +210,7 @@ td{
   cursor:pointer;
   transition: all .16s ease;
   box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
+  font-weight: 700;
 }
 
 .btn:hover{
@@ -284,8 +284,9 @@ input:focus, select:focus{
 
 .dash-title{
   margin: 10px 0 4px;
-  font-size: 34px;
+  font-size: 42px;
   color: var(--text);
+  font-family: var(--cursive);
 }
 
 .statbox{
@@ -315,7 +316,7 @@ input:focus, select:focus{
   color: inherit;
   background: #fff;
   border: 1px solid var(--stroke);
-  border-left: 4px solid var(--brand); /* Bara roz din stânga */
+  border-left: 4px solid var(--brand);
   border-radius: 18px;
   padding: 14px;
   box-shadow: var(--shadow2);
